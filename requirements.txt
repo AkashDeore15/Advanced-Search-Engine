@@ -1,2 +1,5 @@
+```plaintext
 beautifulsoup4
 requests
+redis
+scikit-learn
