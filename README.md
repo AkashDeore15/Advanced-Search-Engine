@@ -13,5 +13,5 @@ This project is an advanced search engine built using Python. It indexes the con
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/AkashDeore15/advanced_search_engine.git
+   git clone https://github.com/AkashDeore15/Search_Engine_Project
    cd advanced_search_engine
