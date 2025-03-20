@@ -6,35 +6,9 @@ from search_engine.engine import SearchEngine
 
 @pytest.fixture
 def engine():
-    """Create and return a SearchEngine instance for testing."""
-    return SearchEngine()
-
-@pytest.fixture
-def sample_docs_data():
-    """Create sample document data for testing."""
-    return [
-        {
-            'doc_id': 'doc1',
-            'content': 'This is a document about python programming.',
-            'metadata': {'author': 'John'}
-        },
-        {
-            'doc_id': 'doc2',
-            'content': 'A guide to search engines and information retrieval.',
-            'metadata': {'author': 'Alice'}
-        },
-        {
-            'doc_id': 'doc3',
-            'content': 'Advanced python techniques for data processing.',
-            'metadata': {'author': 'Bob'}
-        },
-        {
-            'doc_id': 'doc4',
-            'content': 'TF-IDF is a method used in search engines to rank documents.',
-            'metadata': {'author': 'Alice'}
-        }
-    ]
-
+    """Create and return a fresh SearchEngine instance for testing."""
+    # Create a new engine with caching disabled to avoid Redis dependency
+    return SearchEngine(enable_cache=False)
 
 def test_engine_initialization(engine):
     """Test that a SearchEngine can be properly initialized."""
@@ -129,7 +103,6 @@ def test_get_stats(engine, sample_docs_data):
     # Check stats with documents
     stats = engine.get_stats()
     assert stats['num_documents'] == 4
-
 
 def test_change_ranker(engine):
     """Test changing the ranker used by the search engine."""
