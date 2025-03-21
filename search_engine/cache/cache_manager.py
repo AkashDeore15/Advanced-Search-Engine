@@ -203,7 +203,7 @@ class CacheManager:
         Returns:
             bool: True if invalidated, False otherwise
         """
-        keys = self.redis.keys_pattern("%s*", self.DOC_PREFIX)
+        keys = self.redis.keys_pattern(f"{self.DOC_PREFIX}*")
         if not keys:
             return True
         for key in keys:
@@ -217,7 +217,7 @@ class CacheManager:
         Returns:
             bool: True if invalidated, False otherwise
         """
-        keys = self.redis.keys_pattern("%s*", self.QUERY_PREFIX)
+        keys = self.redis.keys_pattern(f"{self.QUERY_PREFIX}*")
         if not keys:
             return True
         for key in keys:
@@ -245,8 +245,14 @@ class CacheManager:
         """
         if not self.cache_enabled:
             return False
-        key = "%s engine_stats", self.STATS_PREFIX
-        return self.redis.set(key, stats_data, self.stats_ttl)
+            
+        try:
+            key = f"{self.STATS_PREFIX}engine_stats"
+            result = self.redis.set(key, stats_data, self.stats_ttl)
+            return bool(result)  # Ensure we return a boolean
+        except Exception as e:
+            logger.error(f"Error caching stats: {e}")
+            return False
 
     def get_cached_stats(self) -> Optional[Dict[str, Any]]:
         """

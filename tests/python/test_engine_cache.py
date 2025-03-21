@@ -72,10 +72,10 @@ def test_document_caching(engine_with_cache):
     assert second_retrieval_time <= first_retrieval_time * 1.5  # Allow some margin
 
 
-def test_query_caching(engine_with_cache, sample_docs):
+def test_query_caching(engine_with_cache, sample_docs_data):
     """Test that query results are properly cached."""
     # Index some documents
-    engine_with_cache.index_documents(sample_docs)
+    engine_with_cache.index_documents(sample_docs_data)
     # Search for a query
     start_time = time.time()
     results1 = engine_with_cache.search('python programming')
@@ -92,10 +92,10 @@ def test_query_caching(engine_with_cache, sample_docs):
     assert second_search_time < first_search_time
 
 
-def test_cache_invalidation(engine_with_cache, sample_docs):
+def test_cache_invalidation(engine_with_cache, sample_docs_data):
     """Test that cache is properly invalidated when documents change."""
     # Index some documents
-    engine_with_cache.index_documents(sample_docs)
+    engine_with_cache.index_documents(sample_docs_data)
     # Search for a query
     results1 = engine_with_cache.search('search engines')
     assert len(results1) > 0
@@ -110,10 +110,10 @@ def test_cache_invalidation(engine_with_cache, sample_docs):
         assert result['doc_id'] != top_doc_id
 
 
-def test_enable_disable_cache(engine_with_cache, sample_docs):
+def test_enable_disable_cache(engine_with_cache, sample_docs_data):
     """Test enabling and disabling the cache."""
     # Index some documents
-    engine_with_cache.index_documents(sample_docs)
+    engine_with_cache.index_documents(sample_docs_data)
     # Search with cache enabled
     results1 = engine_with_cache.search('python')
     assert len(results1) > 0
@@ -131,25 +131,25 @@ def test_enable_disable_cache(engine_with_cache, sample_docs):
     assert len(results3) > 0
 
 
-def test_get_stats_with_cache(engine_with_cache, sample_docs):
+def test_get_stats_with_cache(engine_with_cache, sample_docs_data):
     """Test getting stats with cache."""
     # Index some documents
-    engine_with_cache.index_documents(sample_docs)
+    engine_with_cache.index_documents(sample_docs_data)
     # Get stats
     stats = engine_with_cache.get_stats()
     # Check stats
-    assert stats['num_documents'] == len(sample_docs)
+    assert stats['num_documents'] == len(sample_docs_data)
     assert 'cache' in stats
     assert 'hit_ratio' in stats['cache']
     # Get stats again - should come from cache
     stats2 = engine_with_cache.get_stats()
-    assert stats2['num_documents'] == len(sample_docs)
+    assert stats2['num_documents'] == len(sample_docs_data)
 
 
-def test_performance_stats(engine_with_cache, sample_docs):
+def test_performance_stats(engine_with_cache, sample_docs_data):
     """Test getting performance stats."""
     # Index some documents
-    engine_with_cache.index_documents(sample_docs)
+    engine_with_cache.index_documents(sample_docs_data)
     # Do some searches to generate cache metrics
     engine_with_cache.search('python')
     engine_with_cache.search('python')  # Should hit cache
@@ -163,10 +163,10 @@ def test_performance_stats(engine_with_cache, sample_docs):
     assert stats['cache']['misses'] > 0
 
 
-def test_clear_cache(engine_with_cache, sample_docs):
+def test_clear_cache(engine_with_cache, sample_docs_data):
     """Test clearing the cache."""
     # Index some documents
-    engine_with_cache.index_documents(sample_docs)
+    engine_with_cache.index_documents(sample_docs_data)
     # Do a search to cache results
     engine_with_cache.search('python')
     # Clear the cache

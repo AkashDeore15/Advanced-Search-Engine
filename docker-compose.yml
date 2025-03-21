@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  # Redis cache
+  redis:
+    image: redis:alpine
+    command: redis-server --appendonly yes
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    networks:
+      - search-engine-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Python search engine
+  search-engine:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.python
+    volumes:
+      - ./data:/app/data
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - search-engine-network
+
+  # Node.js REST API
+  rest-api:
+    build:
+      context: ./rest_api
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+      - PYTHON_EXECUTABLE=python
+      - SEARCH_ENGINE_PATH=/app/search_engine
+    volumes:
+      - ./search_engine:/app/search_engine
+    depends_on:
+      - search-engine
+      - redis
+    restart: unless-stopped
+    networks:
+      - search-engine-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/admin/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Nginx for load balancing and serving static content
+  nginx:
+    image: nginx:alpine
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/ssl:/etc/nginx/ssl
+      - ./nginx/www:/usr/share/nginx/html
+    depends_on:
+      - rest-api
+    restart: unless-stopped
+    networks:
+      - search-engine-network
+
+# Persistent volumes
+volumes:
+  redis-data:
+
+# Network for all services
+networks:
+  search-engine-network:
+    driver: bridge

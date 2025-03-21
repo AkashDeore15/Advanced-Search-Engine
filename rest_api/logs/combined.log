@@ -1,0 +1,58 @@
+2025-03-20 20:35:42 info: Server running on port 3000
+2025-03-20 20:36:06 info: GET /
+2025-03-20 20:36:07 info: GET /favicon.ico
+2025-03-20 20:36:53 info: GET /api/search?q=your%20search%20term
+2025-03-20 20:36:53 info: Executing search command for query: "your search term" with limit: 10
+2025-03-20 20:37:00 info: GET /api/search?q=your%20search%20term
+2025-03-20 20:37:00 info: Executing search command for query: "your search term" with limit: 10
+2025-03-20 20:37:05 info: GET /api/search?q=your%20search%20term
+2025-03-20 20:37:05 info: Executing search command for query: "your search term" with limit: 10
+2025-03-20 20:37:23 debug: Search command completed with 0 results
+2025-03-20 20:37:23 debug: Search command completed with 0 results
+2025-03-20 20:37:23 debug: Search command completed with 0 results
+2025-03-20 21:23:46 info: Server running on port 3000
+2025-03-20 21:24:20 info: GET /
+2025-03-20 21:24:33 info: GET /api/admin/health
+2025-03-20 21:24:48 info: POST /api/documents
+2025-03-20 21:24:48 info: Executing index document command for document: "doc1"
+2025-03-20 21:24:51 debug: Index document command completed with success: true
+2025-03-20 21:25:04 info: POST /api/documents
+2025-03-20 21:25:04 info: Executing index document command for document: "doc2"
+2025-03-20 21:25:06 debug: Index document command completed with success: true
+2025-03-20 21:25:06 info: POST /api/documents
+2025-03-20 21:25:06 info: Executing index document command for document: "doc3"
+2025-03-20 21:25:07 debug: Index document command completed with success: true
+2025-03-20 21:25:18 info: GET /api/search?q=machine%20learning
+2025-03-20 21:25:18 info: Executing search command for query: "machine learning" with limit: 10
+2025-03-20 21:25:19 debug: Search command completed with 0 results
+2025-03-20 21:25:27 info: GET /api/search?q=redis%20cache
+2025-03-20 21:25:27 info: Executing search command for query: "redis cache" with limit: 10
+2025-03-20 21:25:28 debug: Search command completed with 0 results
+2025-03-20 21:25:36 info: GET /api/search?q=tf-idf
+2025-03-20 21:25:36 info: Executing search command for query: "tf-idf" with limit: 10
+2025-03-20 21:25:38 debug: Search command completed with 0 results
+2025-03-20 21:25:38 info: GET /api/search?q=tf-idf
+2025-03-20 21:25:38 info: Executing search command for query: "tf-idf" with limit: 10
+2025-03-20 21:25:40 debug: Search command completed with 0 results
+2025-03-20 21:25:46 info: GET /api/documents/doc1
+2025-03-20 21:25:46 info: Executing get document command for document: "doc1"
+2025-03-20 21:25:49 debug: Get document command completed successfully
+2025-03-20 21:25:57 info: GET /api/admin/stats
+2025-03-20 21:25:57 info: Executing get stats command
+2025-03-20 21:25:59 debug: Get stats command completed successfully
+2025-03-20 21:26:06 info: POST /api/admin/cache/clear
+2025-03-20 21:26:06 info: Executing clear cache command
+2025-03-20 21:26:08 debug: Clear cache command completed successfully
+2025-03-20 21:26:15 info: DELETE /api/documents/doc3
+2025-03-20 21:26:15 info: Executing remove document command for document: "doc3"
+2025-03-20 21:26:16 debug: Document not found for removal: doc3
+2025-03-20 21:26:25 info: GET /api/documents/doc3
+2025-03-20 21:26:25 info: Executing get document command for document: "doc3"
+2025-03-20 21:26:26 debug: Document not found: doc3
+2025-03-20 21:26:35 info: GET /
+2025-03-20 21:26:42 info: GET /api/search?q=machine%20learning
+2025-03-20 21:26:42 info: Executing search command for query: "machine learning" with limit: 10
+2025-03-20 21:26:44 debug: Search command completed with 0 results
+2025-03-20 21:26:46 info: GET /api/search?q=machine%20learning
+2025-03-20 21:26:46 info: Executing search command for query: "machine learning" with limit: 10
+2025-03-20 21:26:48 debug: Search command completed with 0 results
