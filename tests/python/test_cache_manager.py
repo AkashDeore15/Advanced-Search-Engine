@@ -95,7 +95,7 @@ def test_invalidate_document(cache_manager):
     assert cache_manager.get_cached_document("doc1") is None
     assert cache_manager.get_cached_document("doc2") is not None
     # Invalidate a non-existent document
-    assert cache_manager.invalidate_document("nonexistent")
+    assert not cache_manager.invalidate_document("nonexistent")
 
 
 def test_invalidate_all_documents(cache_manager):

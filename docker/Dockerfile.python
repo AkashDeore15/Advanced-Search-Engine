@@ -1,0 +1,31 @@
+# Use Python 3.9 slim image as base
+FROM python:3.9-slim
+
+# Set working directory
+WORKDIR /app
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    REDIS_HOST=redis \
+    REDIS_PORT=6379 \
+    REDIS_DB=0
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements file
+COPY requirements.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the search engine code
+COPY search_engine/ /app/search_engine/
+# Expose port for potential direct access to Python services
+EXPOSE 8000
+# Command to run when container starts
+CMD ["python", "-m", "search_engine.server"]
