@@ -1,272 +1,359 @@
 # Advanced Search Engine
 
-A high-performance search engine using TF-IDF for document ranking, Redis caching for performance improvement, and a Node.js-powered REST API for data retrieval.
+A high-performance, **TF-IDF-based** search engine with **Redis** caching for optimized query performance. This project also exposes **Node.js REST APIs** for seamless data retrieval and integration. It demonstrates industry-standard design principles, **OOP**, and design patterns such as **Factory Method** and **Command Pattern**, as well as Python-specific best practices like **LBYL (Look Before You Leap)** and **EAFP (Easier to Ask for Forgiveness than Permission)**.
+
+> **Key Highlights**  
+> - **TF-IDF Ranking**: Provides relevance-based search results  
+> - **Redis Caching**: Improves response time by caching frequently accessed data  
+> - **Node.js REST API**: Offers a simple and scalable interface for querying documents  
+> - **OOP & Design Patterns**: Factory Method, Command Pattern, SOLID principles  
+> - **LBYL & EAFP**: Mix of defensive checks in Node.js and Python’s exception-based approach  
+
+---
+
+## Table of Contents
+1. [Project Overview](#project-overview)
+2. [Features](#features)
+3. [Architecture](#architecture)
+4. [Project Structure](#project-structure)
+5. [Technologies & Dependencies](#technologies--dependencies)
+6. [Installation & Setup](#installation--setup)
+7. [Usage](#usage)
+8. [Design Patterns & Principles](#design-patterns--principles)
+9. [Testing](#testing)
+10. [Performance Optimizations](#performance-optimizations)
+11. [Contributing](#contributing)
+12. [License](#license)
+13. [Contact](#contact)
+
+---
 
 ## Project Overview
 
-This project aims to build a search engine with the following key features:
+The **Advanced Search Engine** is built with the goal of providing **fast** and **accurate** search results using **TF-IDF** for text ranking. A **Redis** cache layer helps boost performance by storing frequently accessed data or query results, leading to a reduction in response times (up to 40% improvement).
 
-1. **TF-IDF Based Search Ranking** - Implements indexing and ranking of documents using TF-IDF to provide accurate and relevant results for user queries.
-2. **Redis Caching** - Caches frequently accessed documents and/or query results to reduce response times by at least 40%.
-3. **Node.js REST APIs** - Integrates Node.js for a fast, non-blocking REST API layer.
-4. **OOP and Design Patterns** - Incorporates Factory Method, Command Pattern, LBYL, and EAFP principles.
-5. **Team Knowledge-Sharing and Best Practices** - Sets up consistent documentation, code reviews, and knowledge-sharing sessions.
-6. **Extensibility** - Lays the groundwork for future enhancements (e.g., advanced ranking algorithms such as BM25).# Advanced Search Engine
+On top of the core search functionality, a **Node.js** REST API layer is included to integrate seamlessly with external clients or other microservices, improving the overall user experience and system maintainability.
 
-A high-performance search engine using TF-IDF for document ranking, Redis caching for performance improvement, and a Node.js-powered REST API for data retrieval.
+By following best coding practices and design patterns, the project ensures cleaner code, easy maintenance, and straightforward scalability for future enhancements (e.g., adding **BM25**, **semantic search**, or advanced NLP pipelines).
 
-## Project Overview
+---
 
-This project aims to build a search engine with the following key features:
+## Features
 
-1. **TF-IDF Based Search Ranking** - Implements indexing and ranking of documents using TF-IDF to provide accurate and relevant results for user queries.
-2. **Redis Caching** - Caches frequently accessed documents and/or query results to reduce response times by at least 40%.
-3. **Node.js REST APIs** - Integrates Node.js for a fast, non-blocking REST API layer.
-4. **OOP and Design Patterns** - Incorporates Factory Method, Command Pattern, LBYL, and EAFP principles.
-5. **Team Knowledge-Sharing and Best Practices** - Sets up consistent documentation, code reviews, and knowledge-sharing sessions.
-6. **Extensibility** - Lays the groundwork for future enhancements (e.g., advanced ranking algorithms such as BM25).
+1. **TF-IDF Ranking**  
+   - Index documents based on their term frequencies.  
+   - Rank search results using the TF-IDF scores for relevancy.
+
+2. **Redis Caching**  
+   - Cache frequently used data or query results in Redis.  
+   - Configurable TTL to invalidate stale data.  
+   - Achieves significant speed gains for repeated or popular queries.
+
+3. **Node.js REST API**  
+   - Expose endpoints for indexing, querying, and managing documents.  
+   - Non-blocking I/O model for high throughput and reduced latency.  
+   - Integrates with the Python engine using well-defined commands.
+
+4. **OOP, LBYL, EAFP**  
+   - Python modules leverage classes, encapsulation, and exception-based handling (EAFP).  
+   - Node.js code demonstrates checking payload validity (LBYL) before processing.
+
+5. **Design Patterns**  
+   - **Factory Method**: Produces ranker objects (e.g., TF-IDF, BM25) from a single factory.  
+   - **Command Pattern**: Encapsulates indexing, querying, and other actions into commands for easier maintainability and extensibility.
+
+---
+
+## Architecture
+
+```
++------------------------+      +---------------------+
+|     [Node.js]         |      |  [Python Engine]    |
+|  REST API Layer       | ---> |  TF-IDF, Ranking    |
+|  (Express / Fastify)  |      |  & Document Indexes |
++---------+-------------+      +----------+----------+
+          |                             |
+          v                             |
+    +------------+                 +-----v-----+
+    |   Redis    | <-------------- |  Caching  |
+    +------------+                 +-----------+
+```
+
+1. **Node.js (REST API)**  
+   - Receives client requests.  
+   - Uses commands to index documents or retrieve query results.  
+   - Validates input (LBYL).  
+   - Communicates with Redis for cached responses.
+
+2. **Python Engine (TF-IDF Core)**  
+   - Maintains the document index.  
+   - Calculates TF-IDF scores for queries.  
+   - Uses EAFP by catching exceptions during indexing or searching.
+
+3. **Redis**  
+   - Serves as a high-speed caching mechanism.  
+   - Stores query results or document data.
+
+---
 
 ## Project Structure
 
-The project follows this structure:
+A suggested directory layout for maintaining clear separation of concerns:
 
 ```
 Advanced-Search-Engine/
-├── docs/                      # Documentation
-│   └── cache.md               # Redis caching documentation
-├── search_engine/             # Python search engine core
-│   ├── __init__.py
-│   ├── document.py            # Document representation
-│   ├── indexer.py             # Document indexing logic
-│   ├── engine.py              # Main search engine orchestration
-│   ├── benchmark.py           # Performance benchmarking utilities
-│   ├── cache/                 # Caching components
-│   │   ├── __init__.py
-│   │   ├── redis_client.py    # Redis client wrapper
-│   │   └── cache_manager.py   # Cache management strategies
-│   ├── rankers/               # Ranking strategies
-│   │   ├── __init__.py
-│   │   └── tfidf_ranker.py    # TF-IDF based ranker
-│   └── factories/             # Factory implementations
-│       └── ranker_factory.py  # Factory for creating rankers
-├── rest_api/                  # Node.js REST API (future)
-├── examples/                  # Example scripts
-│   └── demo_cache.py          # Caching demonstration script
-├── tests/                     # Tests
-│   └── python/                # Python tests
-│       ├── test_document.py
-│       ├── test_indexer.py
-│       ├── test_tfidf_ranker.py
-│       ├── test_ranker_factory.py
-│       ├── test_engine.py
-│       ├── test_engine_cache.py
-│       ├── test_redis_client.py
-│       └── test_cache_manager.py
-├── .gitignore                 # Git ignore file
-├── setup.py                   # Package setup script
-└── README.md                  # Project documentation
+├── docs/
+│    ├── architecture.md          # Additional detailed docs
+│    └── requirements.md          # Project requirements & user stories
+├── search_engine/                # Python side (Core indexing & ranking logic)
+│    ├── __init__.py
+│    ├── engine.py                # Main orchestration for indexing & searching
+│    ├── indexer.py               # Responsible for building the TF-IDF index
+│    ├── rankers/
+│    │    ├── __init__.py
+│    │    ├── tfidf_ranker.py
+│    │    └── bm25_ranker.py      # Example for future extension
+│    └── factories/
+│         └── ranker_factory.py   # Factory Method for rankers
+├── rest_api/                     # Node.js side (REST API)
+│    ├── package.json
+│    ├── app.js                   # Entry point for Express or Fastify
+│    ├── routes/
+│    │    ├── searchRoutes.js     # GET /search
+│    │    └── indexRoutes.js      # POST /documents
+│    ├── controllers/
+│    │    ├── searchController.js
+│    │    └── indexController.js
+│    ├── commands/
+│    │    ├── indexDocumentCommand.js
+│    │    └── queryCommand.js
+│    └── utils/
+│         └── redisClient.js      # Redis connection logic
+├── tests/
+│    ├── python/
+│    │    ├── test_indexer.py
+│    │    └── test_ranker.py
+│    ├── node/
+│    │    └── test_searchRoutes.js
+│    │    └── test_indexRoutes.js
+│    └── integration/
+│         └── test_end_to_end.py
+├── docker/
+│    ├── Dockerfile.python
+│    ├── Dockerfile.node
+│    └── docker-compose.yml
+├── .github/workflows/
+│    └── ci-cd.yaml               # Optional GitHub Actions config
+├── .env.example                  # Example environment variables
+├── requirements.txt              # Python dependencies
+└── README.md                     # This readme
 ```
 
-## Getting Started
+---
 
-### Prerequisites
+## Technologies & Dependencies
 
-- Python 3.9 or higher
-- Redis server (for caching)
-- Node.js 16 or higher (for future REST API)
+1. **Python 3.9+**
+   - Libraries: `numpy`, `scikit-learn` (for TF-IDF), `redis` (Python client)
 
-### Installation
+2. **Node.js 16+ or 18+**
+   - `Express` or `Fastify` for REST endpoints  
+   - `redis` npm package for caching  
+   - `mocha`, `chai`, or `jest` for tests
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/username/advanced-search-engine.git
-   cd advanced-search-engine
-   ```
+3. **Redis** (5.0+ recommended)
 
-2. Create and activate a virtual environment:
+4. **Testing & QA**
+   - **Pytest** (for Python)  
+   - **Jest** / **Mocha** + **Chai** (for Node.js)  
+   - Code linters: `flake8`, `pylint`, `eslint`
+
+5. **Containerization & CI/CD** (optional)
+   - **Docker**, **docker-compose**  
+   - GitHub Actions / Jenkins
+
+---
+
+## Installation & Setup
+
+Follow the instructions below to set up the project locally.
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/AkashDeore15/Advanced-Search-Engine.git
+cd Advanced-Search-Engine
+```
+
+### 2. Set Up Python Environment
+
+1. Create a virtual environment (recommended):
+
    ```bash
    python -m venv venv
-   
-   # On Windows
-   venv\Scripts\activate
-   
-   # On macOS/Linux
-   source venv/bin/activate
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
-3. Install the package in development mode:
+2. Install Python dependencies:
+
    ```bash
-   pip install -e ".[dev]"
+   pip install -r requirements.txt
    ```
 
-4. Install Redis (if not already installed):
-   ```bash
-   # On Ubuntu/Debian
-   sudo apt-get install redis-server
-   
-   # On macOS
-   brew install redis
-   
-   # On Windows
-   # Download from https://github.com/microsoftarchive/redis/releases
-   ```
+3. (Optional) If running a Python-based API (Flask/FastAPI), install relevant packages.
 
-5. Start Redis server:
-   ```bash
-   # On Ubuntu/Debian
-   sudo service redis-server start
-   
-   # On macOS
-   brew services start redis
-   
-   # On Windows
-   redis-server.exe
-   ```
+### 3. Set Up Node.js Environment
 
-### Running Tests
-
-Run the tests using pytest:
+Inside the `rest_api/` directory:
 
 ```bash
-# Run all tests
-pytest
-
-# Run specific test module
-pytest tests/python/test_engine.py
-
-# Run tests with cache (requires Redis)
-pytest tests/python/test_engine_cache.py
-
-# Skip tests that require Redis
-pytest -k "not redis"
-
-# Run tests with coverage report
-pytest --cov=search_engine tests/
+cd rest_api
+npm install
 ```
 
-### Running the Demo
+This will install packages defined in `package.json` (e.g., Express, Redis client).
 
-To run the caching demonstration:
+### 4. Set Up Redis
+
+You can install Redis locally or use Docker:
 
 ```bash
-# Ensure Redis is running
-python examples/demo_cache.py
+# Using Docker
+docker run --name redis-server -p 6379:6379 -d redis
 ```
 
-This demo will show the performance improvement achieved by Redis caching.
+Ensure that your `.env` file or config points to the correct Redis host and port (e.g., `localhost:6379`).
+
+---
 
 ## Usage
 
-### Basic Example
+Below is a high-level example of how to **index** documents and **search** them.
 
-```python
-from search_engine.engine import SearchEngine
+1. **Start Redis** (if not already running)
 
-# Initialize the search engine without caching
-engine = SearchEngine(enable_cache=False)
-
-# Index some documents
-engine.index_document("doc1", "Python is a popular programming language.")
-engine.index_document("doc2", "TF-IDF is used in search engines for ranking documents.")
-engine.index_document("doc3", "Redis can be used as a cache to improve performance.")
-
-# Search for documents
-results = engine.search("programming language")
-
-# Print the results
-for result in results:
-    print(f"Document ID: {result['doc_id']}")
-    print(f"Content: {result['content']}")
-    print(f"Score: {result['score']}")
-    print("---")
+```bash
+docker start redis-server
 ```
 
-### With Redis Caching
+2. **Run the Python Engine** (example)
 
-```python
-from search_engine.engine import SearchEngine
-
-# Initialize the search engine with caching
-engine = SearchEngine(
-    enable_cache=True,
-    redis_host='localhost',
-    redis_port=6379,
-    redis_db=0
-)
-
-# Index some documents
-engine.index_document("doc1", "Python is a popular programming language.")
-engine.index_document("doc2", "TF-IDF is used in search engines for ranking documents.")
-engine.index_document("doc3", "Redis can be used as a cache to improve performance.")
-
-# Search for documents (first search will be cached)
-results = engine.search("programming language")
-
-# Subsequent searches for the same query will be faster
-results = engine.search("programming language")  # Retrieves from cache
-
-# Get cache performance metrics
-stats = engine.get_performance_stats()
-print(f"Cache hit ratio: {stats['cache']['hit_ratio']:.2%}")
-
-# Disable caching if needed
-engine.disable_caching()
-
-# Clear the cache
-engine.clear_cache()
-
-# Close the engine when done (closes Redis connections)
-engine.close()
+```bash
+# If you have a Python service for indexing
+python search_engine/engine.py
 ```
 
-## Performance Benchmarking
+3. **Start the Node.js REST API**
 
-The project includes a benchmarking utility to measure performance improvements:
-
-```python
-from search_engine.engine import SearchEngine
-from search_engine.benchmark import SearchBenchmark
-
-# Initialize the search engine
-engine = SearchEngine(enable_cache=True)
-
-# Create a benchmark instance
-benchmark = SearchBenchmark(engine)
-
-# Run the benchmark
-results = benchmark.run_full_benchmark(
-    doc_count=1000,  # Number of test documents
-    query_count=100,  # Number of test queries
-    iterations=3     # Iterations per query
-)
-
-# Print the results
-benchmark.print_summary()
+```bash
+cd rest_api
+npm start
 ```
 
-Typical performance improvements with Redis caching:
-- Query performance: 40-90% faster with cached queries
-- Document retrieval: Near-instant retrieval of cached documents
-- Overall: Significant reduction in response times for repeated queries
+4. **Index a Document** (cURL example)
+
+```bash
+curl -X POST -H "Content-Type: application/json" \
+     -d '{"title": "Sample Document", "content": "This is a test document for TF-IDF search."}' \
+     http://localhost:3000/documents
+```
+
+5. **Search for Documents** (cURL example)
+
+```bash
+curl -X GET "http://localhost:3000/search?query=test"
+```
+
+> **Note**: The exact endpoints or ports may vary based on your configuration in `app.js` and environment variables.
+
+---
+
+## Design Patterns & Principles
+
+1. **Factory Method**  
+   - `ranker_factory.py` instantiates ranker objects like `TfIdfRanker` or a future `BM25Ranker`.
+
+2. **Command Pattern**  
+   - In Node.js, commands such as `indexDocumentCommand.js` or `queryCommand.js` encapsulate the logic to update or fetch documents.
+
+3. **LBYL (Look Before You Leap)**  
+   - In Node.js: Validate incoming JSON payloads, check required fields before processing to avoid runtime errors.
+
+4. **EAFP (Easier to Ask for Forgiveness than Permission)**  
+   - In Python: Try operations (e.g., dictionary lookups, file operations) and catch exceptions if something goes wrong.
+
+5. **SOLID Principles**  
+   - Classes have a single responsibility, are open for extension but closed for modification, and high-level modules depend on abstractions rather than concrete implementations.
+
+---
+
+## Testing
+
+### Python Tests
+
+Inside the project root:
+
+```bash
+pytest tests/python/
+```
+
+- **Unit Tests**: Verify the correctness of `indexer.py`, `tfidf_ranker.py`, etc.  
+- **Integration Tests**: Test the overall search pipeline.
+
+### Node.js Tests
+
+Inside the `rest_api/` folder:
+
+```bash
+cd rest_api
+npm test
+```
+
+- **Unit Tests**: For controllers, commands, and routes.  
+- **Integration Tests**: Interact with the Python engine or a mock service to validate end-to-end flows.
+
+---
+
+## Performance Optimizations
+
+- **Redis Caching**:  
+  - Cache frequently accessed results to reduce computation.  
+  - Use different Redis data structures (e.g., Hashes, Strings) as per use case.  
+  - Configure an appropriate **TTL** (Time to Live).
+
+- **Asynchronous I/O**:  
+  - Node.js handles concurrent requests without blocking.  
+  - Python can be wrapped in a lightweight service (Flask/FastAPI + gunicorn) with concurrency.
+
+- **Scalability**:  
+  - For large document sets, consider scaling out with additional search nodes or distributed indices.  
+  - Shard or partition data across multiple instances if needed.
+
+---
 
 ## Contributing
 
-1. Fork the repository
-2. Create your feature branch: `git checkout -b feature/my-feature`
-3. Commit your changes: `git commit -am 'Add my feature'`
-4. Push to the branch: `git push origin feature/my-feature`
-5. Submit a pull request
+1. **Fork** the repository  
+2. **Create** a new feature branch: `git checkout -b feature/some-improvement`  
+3. **Commit** your changes: `git commit -m 'Add some improvement'`  
+4. **Push** to the branch: `git push origin feature/some-improvement`  
+5. **Create** a Pull Request on GitHub
 
-## Git Workflow
+Please ensure all **unit tests** and **integration tests** pass before submitting a PR. We also welcome suggestions to improve documentation, code quality, or add new features (e.g., advanced ranking algorithms, new caching strategies, etc.).
 
-We use the following Git workflow:
-
-1. **Feature Branches**: Create a new branch for each feature or bug fix
-2. **Commit Messages**: Write clear, descriptive commit messages
-3. **Pull Requests**: Submit a pull request for code review before merging
-4. **Code Review**: At least one team member must review and approve changes
-5. **Continuous Integration**: All tests must pass before merging
+---
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the [MIT License](LICENSE). Feel free to copy, modify, and distribute as per the license terms.
+
+---
+
+## Contact
+
+For questions, suggestions, or issues, please open a GitHub [Issue](https://github.com/AkashDeore15/Advanced-Search-Engine/issues) or contact [@AkashDeore15](https://github.com/AkashDeore15).
+
+---
+
+**Happy Searching!**  
+Thank you for using and contributing to the **Advanced Search Engine**. We hope this project helps you build and learn about high-performance search solutions, caching techniques, and best practices in modern software development.
